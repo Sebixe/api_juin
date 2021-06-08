@@ -5,10 +5,10 @@ header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header("Content-Type: application/json; charset=UTF-8");
 
-define('DB_HOST', '192.99.2.109/phpmyadmin');
+define('DB_HOST', 'localhost');
 define('DB_USER', 'trifiletti');
 define('DB_PASS', 'Gam4k9Ix');
-define('DB_NAME', 'angulardb');
+define('DB_NAME', 'trifiletti');
 
 function connect()
 {

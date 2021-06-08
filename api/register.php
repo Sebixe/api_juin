@@ -2,28 +2,40 @@
 
 require 'database.php';
 
-$postdata = file_get_contents("php://input");
-$request = json_decode($postdata);
+// Récupère les données postées sur la page "Register"
 
-$sql = "INSERT INTO users(name,password,email) VALUES ('$name','$password','$email')";
+$postdata = file_get_contents("php://input");
+    
+// S'il y a bien des données, elles sont extraites
 
 if(isset($postdata) && !empty($postdata)){
+$request = json_decode($postdata);
+    
+$name = trim($request->name);
+$password = mysqli_real_escape_string($mysqli, trim($request->password)); 
+$email = mysqli_real_escape_string($mysqli, trim($request->email));   
+
+// Une regex vérifie que l'adresse e-mail soit valide, si elle ne l'est pas, elle renvoie une erreur 400
+       
+ $regex = "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
+       
+ if(preg_match($regex, $email)){
+     
+// Les données sont ajoutées à la DB Users
+  
+$sql = "INSERT INTO users(name,password,email) VALUES ('$name','$password','$email')";
+
     if ($mysqli->query($sql) === TRUE) {
     $authdata = [
     'name' => $name,
-    'password' => '',
+    'password' => $password,
     'email' => $email,
     'Id' => mysqli_insert_id($mysqli)
     ];
     echo json_encode($authdata);
     }
+        }else{
+              echo "L'adresse E-mail n'est pas valide." ;
+              http_response_code(400);
+             }
 }
-/*/
-$pattern = '/^(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){255,})(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){65,}@)(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22))(?:\\.(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22)))*@(?:(?:(?!.*[^.]{64,})(?:(?:(?:xn--)?[a-z0-9]+(?:-+[a-z0-9]+)*\\.){1,126}){1,}(?:(?:[a-z][a-z0-9]*)|(?:(?:xn--)[a-z0-9]+))(?:-+[a-z0-9]+)*)|(?:\\[(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){7})|(?:(?!(?:.*[a-f0-9][:\\]]){7,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?)))|(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){5}:)|(?:(?!(?:.*[a-f0-9]:){5,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3}:)?)))?(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))(?:\\.(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))){3}))\\]))$/iD';
-if (!preg_match($pattern,$request['email']) === 1) {
-}else{
-    return http_response_code(400);
-}
-/*/
-
-

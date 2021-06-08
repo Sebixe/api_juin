@@ -1,42 +1,39 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header('Access-Control-Allow-Credentials: true');
-header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE");
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
-header("Content-Type: application/json; charset=UTF-8");
 
 require 'database-admin.php';
 
-// Get the posted data.
+// Récupère les données de création postées dans l'admin
 $postdata = file_get_contents("php://input");
 
 if(isset($postdata) && !empty($postdata))
 {
-  // Extract the data.
+  // Extrait les données 
   $request = json_decode($postdata);
 
-  // Sanitize.
+
+  // Validation des données
+  if(trim($request->date) === '' || trim($request->presentation) === '' || trim($request->img) === '' )
+  {
+    return http_response_code(400);
+  }
+
   $date = mysqli_real_escape_string($con, trim($request->date));
-  $description = mysqli_real_escape_string($con, trim($request->description));
+  $presentation = mysqli_real_escape_string($con, trim($request->presentation));
+  $img = mysqli_real_escape_string($con, trim($request->img));
 
-    var_dump($request);
-    $imageLink = '../assets/img/'.uniqid().substr($request['imageName'], strrpos($request['imageName'], '\\')+1);
-    $splited = explode(',',$request['img']);
-    $binary = base64_decode($splited[1]);
-    file_put_contents($imageLink,$binary);
 
-  // Create.
-  $sql = "INSERT INTO `data`(`id`,`description`,`date`,`img`,`imageName`) VALUES (null,'{$description}','{$date}','{$img}','{$imageLink}')";
+  // Ajout des données dans la DB "data"
+    
+  $sql = "INSERT INTO `data`(`id`,`date`,`presentation`,`img`) VALUES (null,'{$date}','{$presentation}','{$img}')";
 
   if(mysqli_query($con,$sql))
   {
     http_response_code(201);
     $data = [
-      'description' => $description,
       'date' => $date,
+      'presentation' => $presentation,
       'img' => $img,
-      'imageName' => $imageLink,
-      'id' => mysqli_insert_id($con)
+      'id'    => mysqli_insert_id($con)
     ];
     echo json_encode($data);
   }
@@ -44,4 +41,13 @@ if(isset($postdata) && !empty($postdata))
   {
     http_response_code(422);
   }
-  }
+}
+
+/*
+Travail en cours pour récupérer l'image
+
+$imageLink = './uploads/'.uniqid().substr($contactForm['imageName'], strrpos($contactForm['imageName'], '\\')+1);
+    $splited = explode(',', $contactForm['image']);
+    $binary = base64_decode($splited[1]);
+    file_put_contents($imageLink, $binary);
+*/

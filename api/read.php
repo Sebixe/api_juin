@@ -1,11 +1,12 @@
 <?php
-/**
- * Returns the list of Data.
- */
+
 require 'database-admin.php';
 
 $data = [];
 $sql = "SELECT id, description, date, img FROM data";
+
+// Dans le cas où les données sont appelées sur la page d'admin ou sur la page portfolio, cette commande est appelée
+// Les informations du portfolio sont récupérés dans la Db, et envoyé en Json
 
 if($result = mysqli_query($con,$sql))
 {

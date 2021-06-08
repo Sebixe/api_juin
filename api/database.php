@@ -5,13 +5,12 @@ header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header("Content-Type: application/json; charset=UTF-8");
 
-$db_host = '192.99.2.109/phpmyadmin';
+$db_host = 'localhost';
 $db_username = 'trifiletti';
 $db_password = 'Gam4k9Ix';
-$db_name = 'angulardb';
+$db_name = 'trifiletti';
 $mysqli = new mysqli($db_host, $db_username, $db_password,$db_name);
 
 if ($mysqli->connect_error) {
-die('Error : ('. $mysqli->connect_errno .') '. $mysqli->connect_error);
+    die('Error : ('. $mysqli->connect_errno .') '. $mysqli->connect_error);
 }
-?>

@@ -1,28 +1,27 @@
 <?php
 require 'database-admin.php';
 
-// Get the posted data.
+ // Récupère les données postées sur la page d'admin
 $postdata = file_get_contents("php://input");
 
 if(isset($postdata) && !empty($postdata))
 {
-  // Extract the data.
+  // Extraction des données 
   $request = json_decode($postdata);
 
-  // Validate.
+  // Validation
   if(trim($request->date) === '' || trim($request->description) === '' || trim($request->img) === '' )
   {
-    return http_response_code(400);
+    return http_response_code(400);  // Les informations doivent être récupérées avant d'être mises à jour
   }
 
-  // Sanitize.
   $id    = mysqli_real_escape_string($con, (int)$request->id);
   $date = mysqli_real_escape_string($con, trim($request->date));
   $description = mysqli_real_escape_string($con, trim($request->description));
   $img = mysqli_real_escape_string($con, trim($request->img));
 
-  // Update.
-  $sql = "UPDATE `data` SET `description`='$description',`date`='$date', `img`='$img', `imageName`='$imageLink' WHERE `id` = '{$id}' LIMIT 1";
+  // Mise à jour des données sur la DB
+  $sql = "UPDATE `data` SET `description`='$description',`date`='$date', `img`='$img' WHERE `id` = '{$id}' LIMIT 1";
 
   if(mysqli_query($con, $sql))
   {

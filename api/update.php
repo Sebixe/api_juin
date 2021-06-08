@@ -21,7 +21,18 @@ if(isset($postdata) && !empty($postdata))
   $img = trim($request->img);
   $imageName = trim($request->imageName);
     
-    $imageLink = '../portfolio/assets/'.uniqid().substr($imageName, strrpos($imageName, '\\')+1);
+        // Vérification du format de l'image postée
+        
+    $infosfichier = pathinfo($imageName);
+    $extension_upload = $infosfichier['extension'];
+    $extensions_autorisees = array('jpg', 'jpeg', 'gif', 'png');
+    
+if (in_array ($extension_upload, $extensions_autorisees)){   
+    
+    // L'image est récupérée en Base 64 ainsi que son adresse
+    // Celles ci sont traitées avant d'être encodéees dans la DB
+    
+  $imageLink = '../portfolio/assets/'.uniqid().substr($imageName, strrpos($imageName, '\\')+1);
   $splited = explode(',', $img);
   $binary = base64_decode($splited[1]);
   file_put_contents($imageLink, $binary);
@@ -38,4 +49,5 @@ if(isset($postdata) && !empty($postdata))
     echo mysqli_error($con);
     return http_response_code(422);
   }  
+}
 }

@@ -5,8 +5,8 @@ require 'database-admin.php';
 // Récupère les données de création postées dans l'admin
 $postnewdata = file_get_contents("php://input");
 
-if(isset($postnewdata) && !empty($postnewdata))
-{
+if(isset($postnewdata) && !empty($postnewdata)){
+    
   // Extrait les données 
   $request = json_decode($postnewdata);
 
@@ -14,10 +14,18 @@ if(isset($postnewdata) && !empty($postnewdata))
   $description = mysqli_real_escape_string($con, trim($request->description));
   $img = trim($request->img);
   $imageName = trim($request->imageName);
-
+    
+    // Vérification du format de l'image postée
+    
+$infosfichier = pathinfo($imageName);
+$extension_upload = $infosfichier['extension'];
+$extensions_autorisees = array('jpg', 'jpeg', 'gif', 'png');
+    
+if (in_array ($extension_upload, $extensions_autorisees)){
+    
     // L'image est récupérée en Base 64 ainsi que son adresse
     // Celles ci sont traitées avant d'être encodéees dans la DB
-
+    
   $imageLink = '../portfolio/assets/'.uniqid().substr($imageName, strrpos($imageName, '\\')+1);
   $splited = explode(',', $img);
   $binary = base64_decode($splited[1]);
@@ -27,8 +35,7 @@ if(isset($postnewdata) && !empty($postnewdata))
     
   $sql = "INSERT INTO `data`(`id`,`date`,`description`,`img`,`imageName`) VALUES (null,'{$date}','{$description}','{$imageLink}','{$imageName}')";
 
-  if(mysqli_query($con,$sql))
-  {
+  if(mysqli_query($con,$sql)){
     http_response_code(201);
     $data = [
       'date' => $date,
@@ -38,8 +45,10 @@ if(isset($postnewdata) && !empty($postnewdata))
       'id'    => mysqli_insert_id($con)
     ];
     echo json_encode($data);
+      
   }else{
     echo mysqli_error($con);
-    http_response_code(422);
-  }
+    http_response_code(422); 
+  }   
+}
 }

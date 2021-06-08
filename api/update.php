@@ -21,7 +21,7 @@ if(isset($postdata) && !empty($postdata))
   $img = trim($request->img);
   $imageName = trim($request->imageName);
     
-    $imageLink = './assets/'.uniqid().substr($imageName, strrpos($imageName, '\\')+1);
+    $imageLink = '../portfolio/assets/'.uniqid().substr($imageName, strrpos($imageName, '\\')+1);
   $splited = explode(',', $img);
   $binary = base64_decode($splited[1]);
   file_put_contents($imageLink, $binary);

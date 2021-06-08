@@ -18,7 +18,7 @@ if(isset($postnewdata) && !empty($postnewdata))
     // L'image est récupérée en Base 64 ainsi que son adresse
     // Celles ci sont traitées avant d'être encodéees dans la DB
 
-  $imageLink = './assets/'.uniqid().substr($imageName, strrpos($imageName, '\\')+1);
+  $imageLink = '../portfolio/assets/'.uniqid().substr($imageName, strrpos($imageName, '\\')+1);
   $splited = explode(',', $img);
   $binary = base64_decode($splited[1]);
   file_put_contents($imageLink, $binary);
